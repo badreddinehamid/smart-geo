@@ -1,0 +1,413 @@
+/* styles.css - Cyberpunk GPS Tracker */
+
+:root {
+  /* Neon color palette */
+  --primary: #00ff88;
+  --secondary: #00aaff;
+  --alert: #ff0088;
+  --dark-bg: #0a0e27;
+  --panel-bg: #0f1629;
+  --border-color: #1a2847;
+  --text-primary: #e0e6ff;
+  --text-secondary: #a0aac0;
+  --glow-primary: 0 0 20px rgba(0, 255, 136, 0.5);
+  --glow-secondary: 0 0 20px rgba(0, 170, 255, 0.5);
+  --glow-alert: 0 0 20px rgba(255, 0, 136, 0.5);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: "Courier New", monospace;
+  display: flex;
+  background: var(--dark-bg);
+  color: var(--text-primary);
+}
+
+/* Particle canvas background */
+#particleCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.3;
+}
+
+#map {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+}
+
+/* Panel styling */
+#panel {
+  width: 380px;
+  padding: 20px;
+  background: linear-gradient(180deg, var(--panel-bg) 0%, #0d1220 100%);
+  overflow-y: auto;
+  border-left: 2px solid var(--primary);
+  box-shadow: -10px 0 40px rgba(0, 255, 136, 0.1), inset 0 0 20px rgba(0, 255, 136, 0.05);
+  z-index: 2;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) transparent;
+}
+
+#panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+#panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#panel::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+/* Panel header */
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.panel-header h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: var(--primary);
+  text-shadow: var(--glow-primary);
+  letter-spacing: 2px;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: rgba(0, 255, 136, 0.1);
+  border: 1px solid var(--primary);
+  border-radius: 20px;
+  font-size: 0.75rem;
+  color: var(--primary);
+  text-shadow: var(--glow-primary);
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--primary);
+  border-radius: 50%;
+  animation: pulse 1.5s ease-in-out infinite;
+  box-shadow: var(--glow-primary);
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
+
+/* Sections */
+.section {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: rgba(0, 255, 136, 0.03);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+}
+
+.section-title {
+  font-size: 0.85rem;
+  color: var(--secondary);
+  text-shadow: var(--glow-secondary);
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+/* Data grid */
+.data-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.data-item {
+  padding: 10px;
+  background: rgba(0, 170, 255, 0.05);
+  border: 1px solid rgba(0, 170, 255, 0.2);
+  border-radius: 6px;
+}
+
+.label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.value {
+  font-size: 1rem;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-family: "Courier New", monospace;
+}
+
+.glow-text {
+  color: var(--primary);
+  text-shadow: var(--glow-primary);
+}
+
+/* Speed display */
+.speed-display {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, rgba(0, 170, 255, 0.05) 100%);
+  border: 2px solid var(--primary);
+  border-radius: 8px;
+  box-shadow: var(--glow-primary);
+}
+
+.speed-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-shadow: var(--glow-primary);
+  font-family: "Courier New", monospace;
+  min-width: 120px;
+}
+
+.speed-unit {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+/* Compass */
+.compass-container {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.compass-rose {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border: 2px solid var(--secondary);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 170, 255, 0.1) 0%, rgba(0, 170, 255, 0.02) 100%);
+  box-shadow: var(--glow-secondary), inset 0 0 20px rgba(0, 170, 255, 0.1);
+}
+
+.heading-needle {
+  position: absolute;
+  width: 3px;
+  height: 40px;
+  background: linear-gradient(to top, var(--alert), transparent);
+  left: 50%;
+  top: 10px;
+  transform: translateX(-50%);
+  transform-origin: center 40px;
+  box-shadow: var(--glow-alert);
+}
+
+.compass-labels {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--secondary);
+}
+
+.compass-n,
+.compass-e,
+.compass-s,
+.compass-w {
+  position: absolute;
+}
+
+.compass-n {
+  top: 5px;
+}
+.compass-e {
+  right: 5px;
+}
+.compass-s {
+  bottom: 5px;
+}
+.compass-w {
+  left: 5px;
+}
+
+.track-display {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.track-display .label {
+  font-size: 0.7rem;
+}
+
+.track-display .value {
+  font-size: 1.2rem;
+}
+
+/* Signal bars */
+.signal-bars {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.bar-group {
+  display: flex;
+  gap: 6px;
+  align-items: flex-end;
+  height: 60px;
+}
+
+.signal-bar {
+  width: 8px;
+  background: linear-gradient(to top, var(--primary), var(--secondary));
+  border-radius: 2px;
+  box-shadow: var(--glow-primary);
+  animation: signal-pulse 2s ease-in-out infinite;
+}
+
+.signal-bar:nth-child(1) {
+  animation-delay: 0s;
+}
+.signal-bar:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.signal-bar:nth-child(3) {
+  animation-delay: 0.4s;
+}
+.signal-bar:nth-child(4) {
+  animation-delay: 0.6s;
+}
+.signal-bar:nth-child(5) {
+  animation-delay: 0.8s;
+}
+
+@keyframes signal-pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.sat-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sat-info .value {
+  font-size: 1.5rem;
+}
+
+/* Trail list */
+.trail-list {
+  font-size: 0.8rem;
+  max-height: 150px;
+  overflow-y: auto;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+}
+
+.trail-list div {
+  padding: 4px 0;
+  color: var(--text-secondary);
+  border-bottom: 1px solid rgba(0, 255, 136, 0.1);
+  font-family: "Courier New", monospace;
+  font-size: 0.75rem;
+}
+
+.trail-list div:last-child {
+  border-bottom: none;
+}
+
+/* Footer */
+.footer-info {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.footer-info code {
+  color: var(--primary);
+  background: rgba(0, 255, 136, 0.1);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: "Courier New", monospace;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+  }
+
+  #panel {
+    width: 100%;
+    max-height: 40vh;
+    border-left: none;
+    border-top: 2px solid var(--primary);
+  }
+
+  .data-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .compass-container {
+    flex-direction: column;
+  }
+
+  .speed-value {
+    font-size: 2rem;
+  }
+}
