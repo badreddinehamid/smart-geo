@@ -1,0 +1,37 @@
+import csv
+import time
+import gps
+from datetime import datetime
+
+# Connexion à gpsd
+session = gps.gps(mode=gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
+
+# Nom du fichier CSV avec date
+filename = f"gps_data_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+
+# Créer le fichier CSV et ajouter l’en-tête
+with open(filename, mode='w', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerow(["Time", "Latitude", "Longitude", "Altitude (m)", "Speed (m/s)"])
+
+    print(f"Logging GPS data to {filename} ... (Ctrl + C to stop)")
+
+    try:
+        while True:
+            report = session.next()
+            if report['class'] == 'TPV':
+                latitude = getattr(report, 'lat', None)
+                longitude = getattr(report, 'lon', None)
+                altitude = getattr(report, 'alt', None)
+                speed = getattr(report, 'speed', None)
+                timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+                if latitude and longitude:
+                    writer.writerow([timestamp, latitude, longitude, altitude, speed])
+                    print(f"[{timestamp}] Lat: {latitude}, Lon: {longitude}, Alt: {altitude}, Speed: {speed}")
+                    file.flush()  # pour enregistrer en temps réel
+
+            time.sleep(1)
+
+    except KeyboardInterrupt:
+        print("\nArrêt du programme. Données enregistrées dans", filename)
